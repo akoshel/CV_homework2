@@ -127,13 +127,13 @@ def main(args):
     train_transforms = get_train_transforms((image_w, image_h), args.augs)
     train_dataset = RecognitionDataset(args.data_path, os.path.join(args.data_path, "train_recognition.json"),
                                        abc=abc, transforms=train_transforms, split="train")
-    train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=2,
+    train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=4,
                                   collate_fn=train_dataset.collate_fn)
 
     val_transforms = get_val_transforms((image_w, image_h))
     val_dataset = RecognitionDataset(args.data_path, os.path.join(args.data_path, "train_recognition.json"),
                                      abc=abc, transforms=val_transforms, split="val")
-    val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=2,
+    val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=4,
                                 collate_fn=val_dataset.collate_fn)
 
     logger.info(f"Length of train / val = {len(train_dataset)}/ {len(val_dataset)}")
