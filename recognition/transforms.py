@@ -91,7 +91,7 @@ class Normalize(object):
 
     def __call__(self, item):
         item["image"] = (item["image"] - self.mean) / self.std
-        return item
+        return item__getitem__
 
 
 def get_train_transforms(image_size, augs):
