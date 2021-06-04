@@ -36,9 +36,31 @@ class RecognitionDataset(Dataset):
     def _parse_generated(self, path):
         onlyfiles = [f for f in listdir(path) if isfile(join(path, f))]
         image_filenames, texts = [], []
+        mapping = {
+            'а': 'A',
+            'в': 'B',
+            'с': 'C',
+            'е': 'E',
+            'н': 'H',
+            'к': 'K',
+            'м': 'M',
+            'о': 'O',
+            'р': 'P',
+            'т': 'T',
+            'х': 'X',
+            'у': 'Y',
+            '0': '0'
+        }
         for item in onlyfiles:
             image_filenames.append(item)
-            texts.append(item.split(".")[0])
+            text = ''
+            sample = item.split(".")[0]
+            for s in sample:
+                try:
+                    text += mapping[s]
+                except KeyError:
+                    text += s
+            texts.append(text)
         return image_filenames, texts
 
 
