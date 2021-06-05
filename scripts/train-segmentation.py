@@ -13,7 +13,7 @@ from segmentation.loss import dice_coeff, dice_loss, dice_loss_custom
 from segmentation.models import get_model
 from segmentation.transforms import get_train_transforms, get_val_transforms
 from inference_utils import get_logger
-
+import segmentation_models_pytorch as smp
 
 def parse_arguments():
     parser = ArgumentParser()
@@ -105,7 +105,7 @@ def main(args):
 
     # Key words: 'background'.
     # criterion = lambda x, y: (args.weight_bce * nn.BCELoss()(x, y), (1. - args.weight_bce) * dice_loss(x, y))
-    criterion = dice_loss_custom
+    criterion = smp.utils.losses.DiceLoss()
     train_transforms = get_train_transforms(args.image_size)
     train_dataset = DetectionDataset(args.data_path, os.path.join(args.data_path, "train_segmentation.json"),
                                      transforms=train_transforms, split="train")
