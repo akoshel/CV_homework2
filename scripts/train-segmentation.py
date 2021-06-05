@@ -15,6 +15,10 @@ from segmentation.transforms import get_train_transforms, get_val_transforms
 from inference_utils import get_logger
 import segmentation_models_pytorch as smp
 
+
+torch.backends.cudnn.enabled = True
+
+
 def parse_arguments():
     parser = ArgumentParser()
     parser.add_argument("-d", "--data_path", dest="data_path", type=str, default=None, help="path to the data")
