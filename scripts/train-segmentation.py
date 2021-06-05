@@ -102,7 +102,7 @@ def main(args):
     logger.info(f"Model type: {model.__class__.__name__}")
 
     # TODO TIP: Pure Adam(W) with Karpathy constant LR is great, but there's still room for improvements.
-    optimizer = optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
+    # optimizer = optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     loss = smp.utils.losses.DiceLoss()
     metrics = [
         smp.utils.metrics.IoU(threshold=0.5),
@@ -111,7 +111,7 @@ def main(args):
     # optimizer = torch.optim.Adam([
     #     dict(params=model.parameters(), lr=args.lr),
     # ])
-    # TODO TIP: You can always try on plateau scheduler as a default option
+    # TODO TIP: You can always try oAn plateau scheduler as a default option
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=args.lr_step, gamma=args.lr_gamma) \
         if args.lr_step is not None else None
 
