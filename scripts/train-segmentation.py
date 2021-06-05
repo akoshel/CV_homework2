@@ -148,7 +148,7 @@ def main(args):
         device=device,
         verbose=True,
     )
-    best_model_info = {"epoch": -1, "val_dice": -100., "train_dice": 0., "train_loss": 0.}
+    best_model_info = {"epoch": -1, "val_dice": 0., "train_dice": 0., "train_loss": 0.}
     for epoch in range(args.epochs):
         logger.info(f"Starting epoch {epoch + 1}/{args.epochs}.")
         #
@@ -160,7 +160,7 @@ def main(args):
         # train_loss = train_logs['dice_score']
         val_dice = valid_logs['iou_score']
         scheduler.step()
-        if val_dice > best_model_info["val_dice"]:
+        if val_dice < best_model_info["val_dice"]:
             best_model_info["val_dice"] = val_dice
             # best_model_info["train_loss"] = train_loss
             best_model_info["epoch"] = epoch
