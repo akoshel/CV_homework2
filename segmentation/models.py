@@ -8,7 +8,7 @@ def get_model():
     #     in_channels=3,
     #     classes=1
     # )
-    ENCODER = 'se_resnext50_32x4d'
+    ENCODER = 'efficientnet-b2'
     ENCODER_WEIGHTS = 'imagenet'
     CLASSES = ['car']
     ACTIVATION = 'sigmoid'  # could be None for logits or 'softmax2d' for multicalss segmentation
