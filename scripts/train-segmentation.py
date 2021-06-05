@@ -16,7 +16,7 @@ from inference_utils import get_logger
 import segmentation_models_pytorch as smp
 
 
-torch.backends.cudnn.enabled = True
+torch.backends.cudnn.enabled = False
 
 
 def parse_arguments():
@@ -157,11 +157,11 @@ def main(args):
         # val_dice = validate(model, val_dataloader, device)
         train_logs = train_epoch.run(train_dataloader)
         valid_logs = valid_epoch.run(val_dataloader)
-        train_loss = train_logs['dice_score']
+        # train_loss = train_logs['dice_score']
         val_dice = valid_logs['iou_score']
         if val_dice > best_model_info["val_dice"]:
             best_model_info["val_dice"] = val_dice
-            best_model_info["train_loss"] = train_loss
+            # best_model_info["train_loss"] = train_loss
             best_model_info["epoch"] = epoch
             with open(os.path.join(args.output_dir, "CP-best.pth"), "wb") as fp:
                 torch.save(model.state_dict(), fp)
