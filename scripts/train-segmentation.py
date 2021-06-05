@@ -108,9 +108,9 @@ def main(args):
         smp.utils.metrics.IoU(threshold=0.5),
     ]
     #
-    # optimizer = torch.optim.Adam([
-    #     dict(params=model.parameters(), lr=args.lr),
-    # ])
+    optimizer = torch.optim.Adam([
+        dict(params=model.parameters(), lr=args.lr),
+    ])
     # TODO TIP: You can always try oAn plateau scheduler as a default option
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=args.lr_step, gamma=args.lr_gamma) \
         if args.lr_step is not None else None
