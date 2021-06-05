@@ -36,13 +36,14 @@ def parse_arguments():
 def validate(model, val_dataloader, device):
     model.eval().to(device)
     val_dice = []
+    criterion = smp.utils.losses.DiceLoss()
     for batch in tqdm.tqdm(val_dataloader):
         images, true_masks = batch
         with torch.no_grad():
             masks_pred = model(images.to(device)).squeeze(1)  # (b, 1, h, w) -> (b, h, w)
         masks_pred = (torch.sigmoid(masks_pred) > 0.5).float()
-        dice = dice_coeff(masks_pred.cpu(), true_masks).item()
-        val_dice.append(dice)
+        # dice = dice_coeff(masks_pred.cpu(), true_masks).item()
+        val_dice.append(criterion(val_dice, true_masks))
     return np.mean(val_dice)
 
 
