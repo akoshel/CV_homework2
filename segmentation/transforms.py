@@ -106,12 +106,12 @@ class Normalize(object):
 
 # TODO TIP: Keywords to think about: 'class imbalance', 'lack of data'.
 def get_train_transforms(image_size):
-    return A.Compose([
+    return Compose([
         Normalize(),
-        A.RandomBrightness(limit=0.2, p=0.5),
-        A.RandomContrast(limit=0.2, p=0.5),
-        A.Blur(blur_limit=3, p=0.5),
-        A.Rotate(border_mode=cv2.BORDER_CONSTANT, limit=10, p=0.8),
+        # A.RandomBrightness(limit=0.2, p=0.5),
+        # A.RandomContrast(limit=0.2, p=0.5),
+        # A.Blur(blur_limit=3, p=0.5),
+        # A.Rotate(border_mode=cv2.BORDER_CONSTANT, limit=10, p=0.8),
         Crop(min_size=1 - 1 / 3., min_ratio=1.0, max_ratio=1.0, p=0.5),
         Flip(p=0.05),
         Pad(max_size=0.6, p=0.25),
