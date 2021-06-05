@@ -82,7 +82,7 @@ def train(model, optimizer, criterion, scheduler, train_dataloader, logger, devi
 def main(args):
     os.makedirs(args.output_dir, exist_ok=True)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
+    print(device)
     logger = get_logger(os.path.join(args.output_dir, "train.log"))
     logger.info("Start training with params:")
     for arg, value in sorted(vars(args).items()):
