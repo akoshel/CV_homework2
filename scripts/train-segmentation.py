@@ -159,6 +159,7 @@ def main(args):
         valid_logs = valid_epoch.run(val_dataloader)
         # train_loss = train_logs['dice_score']
         val_dice = valid_logs['iou_score']
+        scheduler.step()
         if val_dice > best_model_info["val_dice"]:
             best_model_info["val_dice"] = val_dice
             # best_model_info["train_loss"] = train_loss
