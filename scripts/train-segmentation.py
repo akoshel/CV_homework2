@@ -9,7 +9,7 @@ from torch import optim
 from torch.utils.data import DataLoader
 
 from segmentation.dataset import DetectionDataset
-from segmentation.loss import dice_coeff, dice_loss
+from segmentation.loss import dice_coeff, dice_loss, dice_loss_custom
 from segmentation.models import get_model
 from segmentation.transforms import get_train_transforms, get_val_transforms
 from inference_utils import get_logger
@@ -23,7 +23,7 @@ def parse_arguments():
     parser.add_argument("-s", "--image_size", dest="image_size", default=256, type=int, help="input image size")
     parser.add_argument("-lr", "--learning_rate", dest="lr", default=3e-4, type=float, help="learning rate")
     parser.add_argument("-wd", "--weight_decay", dest="weight_decay", default=1e-6, type=float, help="weight decay")
-    parser.add_argument("-lrs", "--learning_rate_step", dest="lr_step", default=None, type=int, help="learning rate step")
+    parser.add_argument("-lrs", "--learning_rate_step", dest="lr_step", default=3, type=int, help="learning rate step")
     parser.add_argument("-lrg", "--learning_rate_gamma", dest="lr_gamma", default=None, type=float,
                         help="learning rate gamma")
     parser.add_argument("-w", "--weight_bce", default=1, type=float, help="weight for BCE loss")
@@ -88,7 +88,6 @@ def main(args):
     for arg, value in sorted(vars(args).items()):
         logger.info("Argument %s: %r", arg, value)
 
-    # TODO TIP: Try other models, either from smp package or from somewhere else.
     model = get_model()
     if args.load is not None:
         with open(args.load, "rb") as fp:
@@ -104,10 +103,9 @@ def main(args):
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=args.lr_step, gamma=args.lr_gamma) \
         if args.lr_step is not None else None
 
-    # TODO TIP: Remember what are the problems of BCE for semantic segmentation?
     # Key words: 'background'.
-    criterion = lambda x, y: (args.weight_bce * nn.BCELoss()(x, y), (1. - args.weight_bce) * dice_loss(x, y))
-
+    # criterion = lambda x, y: (args.weight_bce * nn.BCELoss()(x, y), (1. - args.weight_bce) * dice_loss(x, y))
+    criterion = dice_loss_custom
     train_transforms = get_train_transforms(args.image_size)
     train_dataset = DetectionDataset(args.data_path, os.path.join(args.data_path, "train_segmentation.json"),
                                      transforms=train_transforms, split="train")

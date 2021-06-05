@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import albumentations as A
 
 
 class Compose(object):
@@ -103,11 +104,13 @@ class Normalize(object):
         return image, mask
 
 
-# TODO TIP: Is default image size (256) enough for segmentation of car license plates?
-# TODO TIP: Chances are there's a great lib for complex data augmentations, 'Albumentations' or so...
 # TODO TIP: Keywords to think about: 'class imbalance', 'lack of data'.
 def get_train_transforms(image_size):
     return Compose([
+        A.RandomBrightness(limit=0.2, p=0.5),
+        A.RandomContrast(limit=0.2, p=0.5),
+        A.Blur(blur_limit=3, p=0.5),
+        A.Rotate(border_mode=cv2.BORDER_CONSTANT, limit=10, p=0.8),
         Normalize(),
         Crop(min_size=1 - 1 / 3., min_ratio=1.0, max_ratio=1.0, p=0.5),
         Flip(p=0.05),
