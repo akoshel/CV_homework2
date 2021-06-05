@@ -98,15 +98,22 @@ def main(args):
     logger.info(f"Model type: {model.__class__.__name__}")
 
     # TODO TIP: Pure Adam(W) with Karpathy constant LR is great, but there's still room for improvements.
-    optimizer = optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
+    # optimizer = optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
+    loss = smp.utils.losses.DiceLoss()
+    metrics = [
+        smp.utils.metrics.IoU(threshold=0.5),
+    ]
 
+    optimizer = torch.optim.Adam([
+        dict(params=model.parameters(), lr=0.0001),
+    ])
     # TODO TIP: You can always try on plateau scheduler as a default option
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=args.lr_step, gamma=args.lr_gamma) \
         if args.lr_step is not None else None
 
     # Key words: 'background'.
     # criterion = lambda x, y: (args.weight_bce * nn.BCELoss()(x, y), (1. - args.weight_bce) * dice_loss(x, y))
-    criterion = smp.utils.losses.DiceLoss()
+    # criterion = smp.utils.losses.DiceLoss()
     train_transforms = get_train_transforms(args.image_size)
     train_dataset = DetectionDataset(args.data_path, os.path.join(args.data_path, "train_segmentation.json"),
                                      transforms=train_transforms, split="train")
@@ -121,14 +128,33 @@ def main(args):
 
     logger.info(f"Length of train / val = {len(train_dataset)} / {len(val_dataset)}")
     logger.info(f"Number of batches of train / val = {len(train_dataloader)} / {len(val_dataloader)}")
+    train_epoch = smp.utils.train.TrainEpoch(
+        model,
+        loss=loss,
+        metrics=metrics,
+        optimizer=optimizer,
+        device=device,
+        verbose=True,
+    )
 
+    valid_epoch = smp.utils.train.ValidEpoch(
+        model,
+        loss=loss,
+        metrics=metrics,
+        device=device,
+        verbose=True,
+    )
     best_model_info = {"epoch": -1, "val_dice": 0., "train_dice": 0., "train_loss": 0.}
     for epoch in range(args.epochs):
         logger.info(f"Starting epoch {epoch + 1}/{args.epochs}.")
-
-        train_loss = train(model, optimizer, criterion, scheduler, train_dataloader, logger, device)
-
-        val_dice = validate(model, val_dataloader, device)
+        #
+        # train_loss = train(model, optimizer, criterion, scheduler, train_dataloader, logger, device)
+        #
+        # val_dice = validate(model, val_dataloader, device)
+        train_logs = train_epoch.run(train_dataloader)
+        valid_logs = valid_epoch.run(val_dataloader)
+        train_loss = train_logs['dice_score']
+        val_dice = valid_logs['iou_score']
         if val_dice > best_model_info["val_dice"]:
             best_model_info["val_dice"] = val_dice
             best_model_info["train_loss"] = train_loss
