@@ -13,7 +13,7 @@ class FeatureExtractor(nn.Module):
         super(FeatureExtractor, self).__init__()
 
         h, w = input_size
-        resnet = getattr(models, 'resnet18')(pretrained=True)
+        resnet = getattr(models, 'resnext50_32x4d')(pretrained=True)
         self.cnn = nn.Sequential(*list(resnet.children())[:-2])
 
         self.pool = nn.AvgPool2d(kernel_size=(h // 32, 1))
@@ -115,7 +115,7 @@ class CRNN(nn.Module):
 
     def __init__(self, alphabet=abc,
                  cnn_input_size=(64, 320), cnn_output_len=20,
-                 rnn_hidden_size=128, rnn_num_layers=1, rnn_dropout=0.0, rnn_bidirectional=False):
+                 rnn_hidden_size=128, rnn_num_layers=2, rnn_dropout=0.0, rnn_bidirectional=False):
         super(CRNN, self).__init__()
         self.alphabet = alphabet
         self.features_extractor = FeatureExtractor(input_size=cnn_input_size, output_len=cnn_output_len)
