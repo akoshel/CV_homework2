@@ -13,7 +13,7 @@ class FeatureExtractor(nn.Module):
         super(FeatureExtractor, self).__init__()
 
         h, w = input_size
-        resnet = getattr(models, 'resnext50_32x4d')(pretrained=True)
+        resnet = getattr(models, 'resnet18')(pretrained=True)
         self.cnn = nn.Sequential(*list(resnet.children())[:-2])
 
         self.pool = nn.AvgPool2d(kernel_size=(h // 32, 1))
